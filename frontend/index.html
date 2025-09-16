@@ -1,3 +1,4 @@
+<meta charset="UTF-8" />
 <input id="fileInput" type="file" multiple />
 <button id="uploadBtn">Upload</button>
 <progress id="bar" max="100" value="0" style="width:300px;"></progress>
@@ -22,6 +23,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
       // 不要显式设置 Content-Type
     });
     alert("上传成功：" + JSON.stringify(res.data));
+    window.location.href = `preview.html?id=${encodeURIComponent(res.data['id'])}`;
   } catch (e) {
     alert("上传失败：" + (e.response?.data?.message || e.message));
   } finally {

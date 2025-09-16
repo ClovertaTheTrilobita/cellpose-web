@@ -1,5 +1,5 @@
 from flask import Flask, send_from_directory, request, jsonify
-import os, shutil, time, threading
+import os, shutil, time, threading, datetime
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from pathlib import Path
@@ -33,12 +33,14 @@ def download(timestamp):
 
 @app.post("/upload")
 def upload():
+    ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    os.makedirs(UPLOAD_DIR / ts, exist_ok=True)
     files = request.files.getlist("files")
     saved = []
     for f in files:
         if not f or f.filename == "":
             continue
         name = secure_filename(f.filename)
-        f.save(os.path.join(UPLOAD_DIR, name))
+        f.save(os.path.join(UPLOAD_DIR / ts, name))
         saved.append(name)
-    return jsonify({"ok": True, "count": len(saved), "files": saved})
+    return jsonify({"ok": True, "count": len(saved), "files": saved, "id": ts})
