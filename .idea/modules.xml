@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/cellpose-web-backend.iml" filepath="$PROJECT_DIR$/.idea/cellpose-web-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/cellpose-web.iml" filepath="$PROJECT_DIR$/.idea/cellpose-web.iml" />
     </modules>
   </component>
 </project>
