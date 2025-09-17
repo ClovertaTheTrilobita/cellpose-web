@@ -5,3 +5,4 @@ test_tif
 output
 uploads
 __pycache__
+.idea
