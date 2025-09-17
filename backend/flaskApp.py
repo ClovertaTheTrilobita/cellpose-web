@@ -37,8 +37,9 @@ def index():
 def test_download():
     return send_from_directory("test_output/2025-09-16-20-03-51", "img_overlay.png", as_attachment=True)
 
-@app.get("/dl/<timestamp>")
-def download(timestamp):
+@app.get("/dl")
+def download():
+    timestamp = request.args.get("id")
     input_dir = os.path.join(BASE_DIR, "output", timestamp)
     output_dir = os.path.join(BASE_DIR, "output/tmp", timestamp)  # 不要加 .zip，make_archive 会自动加
     os.makedirs(BASE_DIR / "output/tmp", exist_ok=True)  # 确保 tmp 存在
