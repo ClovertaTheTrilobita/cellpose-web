@@ -1,3 +1,37 @@
 <!DOCTYPE html>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <h1>This is preview</h1>
+<p id="none-exist" hidden>id not exists</p>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type="module">
+  const API_BASE = "http://10.147.18.141:5000/status/";
+  const params = new URLSearchParams(window.location.search);
+  const ID = params.get("id");
+
+  const msg = document.getElementById("none-exist");
+
+  // 没有 id，直接提示
+  if (!ID) {
+    msg.textContent = "missing id in URL";
+    msg.hidden = false;
+  } else {
+    try {
+      const res = await axios.get(API_BASE + "?id=" + encodeURIComponent(ID));
+      const { exists, status } = res.data; // exists: boolean, status: "running" | "success" | "failed"...
+
+      // 只在“不存在”时显示这条消息
+      if (!exists) {
+        msg.textContent = `id "${ID}" not exists`;
+        msg.hidden = false;
+      } else {
+        msg.hidden = true; // 存在就隐藏这条“not exists”的提示
+        
+      }
+    } catch (e) {
+      msg.textContent = "request failed";
+      msg.hidden = false;
+      console.error(e);
+    }
+  }
+</script>

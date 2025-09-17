@@ -3,15 +3,10 @@ from cellpose.io import imread, save_masks
 from PIL import Image
 import numpy as np
 import os, datetime
-from typing import Literal
-
-from sympy import false
+import time
 
 
 class Cprun:
-    # def __init__(self, model: str | Literal["cpsam"], images: list[str] | str):
-    #     self.model = model
-    #     self.images = images
 
     @classmethod
     def run_test(cls):
@@ -26,7 +21,7 @@ class Cprun:
                 f"[{i}] mask max={int(getattr(m, 'max', lambda: 0)()) if hasattr(m, 'max') else int(np.max(m))}, unique={np.unique(m)[:5]} ..."
             )
 
-        ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
         outdir = os.path.join(os.path.dirname(__file__), "test_output", ts)
         os.makedirs(outdir, exist_ok=True)  # 自动创建目录
         for img, mask, flow, name in zip(imgs, masks, flows, files):
@@ -43,8 +38,8 @@ class Cprun:
     @classmethod
     async def run(cls,
                   images: list[str] | str | None = None,
-                  time: datetime.datetime | None = None,
-                  model: str | str = "cpsam",
+                  time: str | None = None,
+                  model: str = "cpsam",
                   diameter: float | None = None,
                   flow_threshold: float | float = 0.4,
                   cellprob_threshold: float | float = 0.0, ):
@@ -67,8 +62,8 @@ class Cprun:
             diameter=diameter
         )
 
-        ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        outdir = os.path.join(os.path.dirname(__file__), "run_output", ts)
+        ts = time
+        outdir = os.path.join(os.path.dirname(__file__), "output", ts)
         os.makedirs(outdir, exist_ok=True)  # 自动创建目录
         for img, mask, flow, name in zip(imgs, masks, flows, files):
             base = os.path.join(outdir, os.path.splitext(os.path.basename(name))[0])
@@ -82,4 +77,5 @@ class Cprun:
             Image.fromarray(over).save(base + "_overlay.png")
 
         message.append(f"Output saved to: {outdir}")
+        message.append(outdir)
         return [True, message]
