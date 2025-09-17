@@ -1,4 +1,5 @@
 import asyncio
+import base64
 from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, send_from_directory, request, jsonify
 import os, shutil, time, threading, datetime, json, redis
@@ -103,7 +104,7 @@ def upload():
 
     return jsonify({"ok": True, "count": len(saved), "id": ts})
 
-@app.get("/status/")
+@app.get("/status")
 def status():
     """
     检查某一cellpose任务是否完成
@@ -115,3 +116,27 @@ def status():
     if not st:
         return jsonify({"ok": True, "exists": False, "status": "not_found"}), 200
     return jsonify({"ok": True, "exists": True, **st}), 200
+
+@app.get("/preview")
+def preview():
+    task_id = request.args.get('id')
+    task_dir = BASE_DIR / "output" / task_id
+    if not task_dir.exists():
+        return jsonify({"ok": False, "error": "task not found"}), 200
+
+    # 找出所有 *_overlay.png 文件
+    files = sorted(task_dir.glob("*_overlay.png"))
+
+    if not files:
+        return jsonify({"ok": False, "error": "no overlay images"}), 200
+
+    result = []
+    for path in files:
+        data = path.read_bytes()
+        encoded = base64.b64encode(data).decode("utf-8")
+        result.append({
+            "filename": path.name,
+            "image": encoded
+        })
+
+    return jsonify({"ok": True, "count": len(result), "images": result})

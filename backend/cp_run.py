@@ -41,8 +41,8 @@ class Cprun:
                   time: str | None = None,
                   model: str = "cpsam",
                   diameter: float | None = None,
-                  flow_threshold: float | float = 0.4,
-                  cellprob_threshold: float | float = 0.0, ):
+                  flow_threshold: float = 0.4,
+                  cellprob_threshold: float = 0.0, ):
 
         if time is None:
             return [False, "No time received"]
