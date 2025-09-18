@@ -2,32 +2,63 @@
 <input id="fileInput" type="file" multiple />
 <button id="uploadBtn">Upload</button>
 <progress id="bar" max="100" value="0" style="width:300px;"></progress>
+<br><br><br>
+<label>flow_threshold:
+  <input id="flow" type="text" placeholder="" />
+</label>
+<br><br>
+<label>cellprob_threshold:
+  <input id="cellprob" type="text" placeholder="" />
+</label>
+<br><br>
+<label>模型（下拉单选）：
+  <select id="model">
+    <option value="cpsam">cpsam</option>
+  </select>
+</label>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-const API = "http://10.147.18.141:5000/upload";
+  const API = "http://10.147.18.141:5000/upload";
 
-document.getElementById("uploadBtn").addEventListener("click", async () => {
-  const input = document.getElementById("fileInput");
-  if (!input.files.length) return alert("请选择文件");
+  function buildUrl() {
+    // 读单选：取 name="mode" 被勾选的那个
+    const model = document.getElementById('model')?.value;
+    const flow = (document.getElementById('flow')?.value || '').trim();
+    const cellp = (document.getElementById('cellprob')?.value || '').trim();
 
-  const fd = new FormData();
-  for (const f of input.files) fd.append("files", f);
-
-  const bar = document.getElementById("bar");
-  try {
-    const res = await axios.post(API, fd, {
-      onUploadProgress: (e) => {
-        if (e.total) bar.value = Math.round((e.loaded * 100) / e.total);
-      },
-      // 不要显式设置 Content-Type
+    // 用 URLSearchParams 组装查询串（避免多 ? 以及手写 &）
+    const qs = new URLSearchParams({
+      model: model,
+      flow_threshold: flow,
+      cellprob_threshold: cellp
     });
-    alert("上传成功：" + JSON.stringify(res.data));
-    window.location.href = `preview.html?id=${encodeURIComponent(res.data['id'])}`;
-  } catch (e) {
-    alert("上传失败：" + (e.response?.data?.message || e.message));
-  } finally {
-    bar.value = 0;
+
+    return `${API}?${qs.toString()}`;
   }
-});
+
+  document.getElementById("uploadBtn").addEventListener("click", async () => {
+    const input = document.getElementById("fileInput");
+    if (!input.files.length) return alert("请选择文件");
+
+    const fd = new FormData();
+    for (const f of input.files) fd.append("files", f);
+
+    const bar = document.getElementById("bar");
+    try {
+      const URL = buildUrl();
+      const res = await axios.post(URL, fd, {
+        onUploadProgress: (e) => {
+          if (e.total) bar.value = Math.round((e.loaded * 100) / e.total);
+        },
+        // 不要显式设置 Content-Type
+      });
+      alert("上传成功：" + JSON.stringify(res.data));
+      window.location.href = `preview.html?id=${encodeURIComponent(res.data['id'])}`;
+    } catch (e) {
+      alert("上传失败：" + (e.response?.data?.message || e.message));
+    } finally {
+      bar.value = 0;
+    }
+  });
 </script>

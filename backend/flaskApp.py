@@ -69,6 +69,9 @@ def upload():
     diameter_raw = request.args.get("diameter") or request.form.get("diameter")
     diameter = _to_float(diameter_raw, None) if diameter_raw not in (None, "") else None
 
+    print("cpt:" + str(cellprob_threshold))
+    print("flow:" + str(flow_threshold))
+
     # 将文件保存在本地目录中
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
     os.makedirs(UPLOAD_DIR / ts, exist_ok=True)
