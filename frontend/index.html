@@ -11,6 +11,10 @@
   <input id="cellprob" type="text" placeholder="" />
 </label>
 <br><br>
+<label>diameter:
+  <input id="diameter" type="text" placeholder="" />
+</label>
+<br><br>
 <label>模型（下拉单选）：
   <select id="model">
     <option value="cpsam">cpsam</option>
@@ -22,16 +26,18 @@
   const API = "http://10.147.18.141:5000/upload";
 
   function buildUrl() {
-    // 读单选：取 name="mode" 被勾选的那个
+    // 获取参数
     const model = document.getElementById('model')?.value;
     const flow = (document.getElementById('flow')?.value || '').trim();
     const cellp = (document.getElementById('cellprob')?.value || '').trim();
+    const diameter = (document.getElementById('diameter')?.value || '').trim();
 
-    // 用 URLSearchParams 组装查询串（避免多 ? 以及手写 &）
+    // 用 URLSearchParams 组装查询串
     const qs = new URLSearchParams({
       model: model,
       flow_threshold: flow,
-      cellprob_threshold: cellp
+      cellprob_threshold: cellp,
+      diameter: diameter
     });
 
     return `${API}?${qs.toString()}`;
@@ -51,7 +57,6 @@
         onUploadProgress: (e) => {
           if (e.total) bar.value = Math.round((e.loaded * 100) / e.total);
         },
-        // 不要显式设置 Content-Type
       });
       alert("上传成功：" + JSON.stringify(res.data));
       window.location.href = `preview.html?id=${encodeURIComponent(res.data['id'])}`;
