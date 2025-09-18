@@ -22,12 +22,18 @@
     } else {
         try {
             const res = await axios.get(API_STATUS + "?id=" + encodeURIComponent(ID));
+            console.log(res);
             const { exists, status } = res.data; // exists: boolean, status: "running" | "success" | "failed"...
 
             if (!exists) {
                 msg.textContent = `id "${ID}" 不存在`;
                 msg.hidden = false;
-            } else {
+            }
+            else if (status == "running"){
+                msg.textContent = `id "${ID}" 仍在运行中，请耐心等待片刻后刷新。`;
+                msg.hidden = false;
+            }
+            else {
                 msg.hidden = true;
                 axios.get(API_PIC + "?id=" + encodeURIComponent(ID)).then(res => {
                     if (res.data.ok) {

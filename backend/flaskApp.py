@@ -71,6 +71,7 @@ def upload():
 
     print("cpt:" + str(cellprob_threshold))
     print("flow:" + str(flow_threshold))
+    print("diameter:" + str(diameter))
 
     # 将文件保存在本地目录中
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
