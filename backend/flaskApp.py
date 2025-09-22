@@ -25,6 +25,7 @@ cfg.data.root_dir = str((CONFIG_PATH.parent / cfg.data.root_dir).resolve())
 BASE_DIR = cfg.data.root_dir
 UPLOAD_DIR = cfg.data.upload_dir
 OUTPUT_DIR = cfg.data.run.output_dir
+MODELS_DIR = str((CONFIG_PATH.parent / cfg.model.save_dir).resolve())
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 executor = ThreadPoolExecutor(max_workers=4)
@@ -160,3 +161,8 @@ def preview():
         })
 
     return jsonify({"ok": True, "count": len(result), "images": result})
+
+@app.get("/models")
+def list_models():
+    models_list = os.listdir(MODELS_DIR)
+    return jsonify({"ok": True, "models": models_list})

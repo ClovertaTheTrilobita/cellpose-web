@@ -22,27 +22,21 @@
           <div class="input-group mb-3">
             <span class="input-group-text">flow threshold:</span>
             <input id="flow" type="text" class="form-control" placeholder="" />
-
           </div>
 
           <div class="input-group mb-3">
             <span class="input-group-text">cellprob threshold:</span>
             <input id="cellprob" type="text" class="form-control" placeholder="" />
-
           </div>
 
           <div class="input-group mb-3">
-
             <span class="input-group-text">diameter:</span>
             <input id="diameter" type="text" class="form-control" placeholder="" />
-
           </div>
 
           <label>
-            <select id="model" class="form-select">
-              <option value="cpsam">模型（下拉单选）：</option>
-              <option value="cpsam">cpsam</option>
-            </select>
+            <select id="model" class="form-select"></select>
+          </label>
           </label>
         </div>
       </div>
@@ -64,7 +58,61 @@
     integrity="sha384-ep+dxp/oz2RKF89ALMPGc7Z89QFa32C8Uv1A3TcEK8sMzXVysblLA3+eJWTzPJzT"
     crossorigin="anonymous"></script>
   <script>
-    const API = "http://10.147.18.141:5000/upload";
+    const API = "http://10.147.18.141:5000/";
+    const APT_UPLOAD = API + "upload";
+    const API_MODEL = API + "models";
+
+    async function loadModels() {
+      const select = document.getElementById('model');
+      // 占位 & 禁用，避免用户在加载中点选
+      select.disabled = true;
+      select.innerHTML = '<option value="">加载中…</option>';
+
+      // 可选：超时控制（5 秒）
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 5000);
+
+      try {
+        const resp = await fetch(API_MODEL, {
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+        const data = await resp.json();
+        const list = Array.isArray(data.models) ? data.models : [];
+
+        // 记住之前的选择（如果有）
+        const prev = select.value;
+
+        // 重新渲染选项
+        select.innerHTML = '<option value="" disabled selected>请选择模型</option>';
+        const seen = new Set();
+        for (const name of list) {
+          if (!name || seen.has(name)) continue;
+          seen.add(name);
+          const opt = document.createElement('option');
+          opt.value = String(name);
+          opt.textContent = String(name);
+          select.appendChild(opt);
+        }
+
+        // 如果原选择仍然存在，则恢复它
+        if (prev && seen.has(prev)) {
+          select.value = prev;
+        }
+      } catch (err) {
+        console.error('加载模型列表失败：', err);
+        select.innerHTML = '<option value="">加载失败（点击重试）</option>';
+        // 点击下拉框时重试
+        select.addEventListener('click', loadModels, { once: true });
+      } finally {
+        clearTimeout(t);
+        select.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadModels);
 
     function buildUrl() {
       // 获取参数
@@ -81,7 +129,7 @@
         diameter: diameter
       });
 
-      return `${API}?${qs.toString()}`;
+      return `${API_UPLOAD}?${qs.toString()}`;
     }
 
     document.getElementById("uploadBtn").addEventListener("click", async () => {
