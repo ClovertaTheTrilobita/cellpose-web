@@ -4,7 +4,16 @@ from PIL import Image
 import numpy as np
 import os, datetime
 import time
+from omegaconf import OmegaConf
+from pathlib import Path
 
+CONFIG_PATH = Path(__file__).parent / "config.yaml"
+cfg = OmegaConf.load(CONFIG_PATH)
+cfg.data.root_dir = str((CONFIG_PATH.parent / cfg.data.root_dir).resolve())
+BASE_DIR = cfg.data.root_dir
+UPLOAD_DIR = cfg.data.upload_dir
+OUTPUT_DIR = cfg.data.run.output_dir
+OUTPUT_TEST_DIR = cfg.data.run.test_output_dir
 
 class Cprun:
 
@@ -22,7 +31,7 @@ class Cprun:
             )
 
         ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
-        outdir = os.path.join(os.path.dirname(__file__), "test_output", ts)
+        outdir = os.path.join(OUTPUT_TEST_DIR, ts)
         os.makedirs(outdir, exist_ok=True)  # 自动创建目录
         for img, mask, flow, name in zip(imgs, masks, flows, files):
             base = os.path.join(outdir, os.path.splitext(os.path.basename(name))[0])
@@ -63,7 +72,7 @@ class Cprun:
         )
 
         ts = time
-        outdir = os.path.join(os.path.dirname(__file__), "output", ts)
+        outdir = os.path.join(OUTPUT_DIR, ts)
         os.makedirs(outdir, exist_ok=True)  # 自动创建目录
         for img, mask, flow, name in zip(imgs, masks, flows, files):
             base = os.path.join(outdir, os.path.splitext(os.path.basename(name))[0])

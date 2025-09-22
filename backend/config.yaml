@@ -1,0 +1,16 @@
+model:
+
+data:
+  root_dir: .
+
+  run:
+    test_output_dir: ${data.root_dir}/run/test_output
+    output_dir: ${data.root_dir}/run/output
+
+  train:
+    test_test_dir: ${data.root_dir}/train/test_test
+    test_train_dir: ${data.root_dir}/train/test_train
+    test_dir: ${data.root_dir}/train/test
+    train_dir: ${data.root_dir}/train/train
+
+  upload_dir: ${data.root_dir}/uploads
