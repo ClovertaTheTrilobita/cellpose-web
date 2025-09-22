@@ -1,8 +1,7 @@
-from cellpose import models, plot
-from cellpose.io import imread, save_masks
+import os
 from PIL import Image
 import numpy as np
-import os, datetime
+import datetime
 import time
 from omegaconf import OmegaConf
 from pathlib import Path
@@ -14,6 +13,12 @@ BASE_DIR = cfg.data.root_dir
 UPLOAD_DIR = cfg.data.upload_dir
 OUTPUT_DIR = cfg.data.run.output_dir
 OUTPUT_TEST_DIR = cfg.data.run.test_output_dir
+MODELS_DIR = str((CONFIG_PATH.parent / cfg.model.save_dir).resolve())
+os.makedirs(MODELS_DIR, exist_ok=True)
+os.environ["CELLPOSE_LOCAL_MODELS_PATH"] = MODELS_DIR
+
+from cellpose import models, plot
+from cellpose.io import imread, save_masks
 
 class Cprun:
 

@@ -1,4 +1,5 @@
 model:
+  save_dir: models
 
 data:
   root_dir: .
