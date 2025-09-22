@@ -24,6 +24,11 @@ class Cprun:
 
     @classmethod
     def run_test(cls):
+        """
+        仅测试用
+
+        :return:
+        """
         model = models.CellposeModel(gpu=True)
         files = ['test_tif/img.png']
         imgs = [imread(f) for f in files]

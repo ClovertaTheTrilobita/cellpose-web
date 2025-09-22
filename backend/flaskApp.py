@@ -63,8 +63,8 @@ def download():
     print(OUTPUT_DIR)
     return send_from_directory(f"{OUTPUT_DIR}/tmp/", f"{timestamp}.zip", as_attachment=True)
 
-@app.post("/upload")
-def upload():
+@app.post("/run_upload")
+def run_upload():
     """
     接收上传的文件，并将其发送给cellpose。
     :return:
@@ -124,6 +124,20 @@ def upload():
     fut.add_done_callback(done_cb)
 
     return jsonify({"ok": True, "count": len(saved), "id": ts})
+
+@app.post("/train_upload")
+def train_upload():
+    ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
+    train_files = request.files.getlist("train_files")
+    test_files = request.files.getlist("test_files")
+    saved = []
+    for f in train_files:
+        if not f or f.filename == "":
+            continue
+        name = secure_filename(f.filename)
+        f.save(os.path.join(UPLOAD_DIR, ts, name))
+        saved.append(os.path.join(UPLOAD_DIR, ts, name))
+
 
 @app.get("/status")
 def status():
