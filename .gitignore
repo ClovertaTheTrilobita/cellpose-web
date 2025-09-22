@@ -6,3 +6,5 @@ output
 uploads
 __pycache__
 .idea
+run
+models
