@@ -14,6 +14,7 @@ from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
+from backend.cp_train import Cptrain
 from cp_run import Cprun
 
 app = Flask(__name__)
@@ -26,6 +27,8 @@ BASE_DIR = cfg.data.root_dir
 UPLOAD_DIR = cfg.data.upload_dir
 OUTPUT_DIR = cfg.data.run.output_dir
 MODELS_DIR = str((CONFIG_PATH.parent / cfg.model.save_dir).resolve())
+TRAIN_DIR  = cfg.data.train.train_dir
+TEST_DIR = cfg.data.train.test_dir
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 executor = ThreadPoolExecutor(max_workers=4)
@@ -128,16 +131,50 @@ def run_upload():
 @app.post("/train_upload")
 def train_upload():
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
+    model_name = request.args.get("model_name") or f"custom_model-{ts}"
+    image_filter = request.args.get("image_filter") or "_img"
+    mask_filter = request.args.get("mask_filter") or "_masks"
+    base_model = request.args.get("base_model") or "cpsam"
+
     train_files = request.files.getlist("train_files")
     test_files = request.files.getlist("test_files")
+    set_status(ts, "pending")
     saved = []
     for f in train_files:
         if not f or f.filename == "":
             continue
         name = secure_filename(f.filename)
-        f.save(os.path.join(UPLOAD_DIR, ts, name))
-        saved.append(os.path.join(UPLOAD_DIR, ts, name))
+        f.save(os.path.join(TRAIN_DIR, ts, name))
+        saved.append(os.path.join(TRAIN_DIR, ts, name))
 
+    for f in test_files:
+        if not f or f.filename == "":
+            continue
+        name = secure_filename(f.filename)
+        f.save(os.path.join(TEST_DIR, ts, name))
+        saved.append(os.path.join(TEST_DIR, ts, name))
+
+    def job():
+        return asyncio.run(Cptrain.start_train(
+            time=ts,
+            model_name=model_name,
+            image_filter=image_filter,
+            mask_filter=mask_filter,
+            base_model=base_model
+        ))
+
+    fut = executor.submit(job)
+
+    def done_cb(f):
+        try:
+            f.result()
+            set_status(ts, "success")
+        except Exception as e:
+            set_status(ts, "failed", error=str(e))
+
+    fut.add_done_callback(done_cb)
+
+    return jsonify({"ok": True, "count": len(saved), "id": ts})
 
 @app.get("/status")
 def status():
