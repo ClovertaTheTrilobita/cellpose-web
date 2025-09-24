@@ -64,7 +64,7 @@
         crossorigin="anonymous"></script>
     <script>
         const API = "http://10.147.18.141:5000/";
-        const APT_UPLOAD = API + "train_upload";
+        const API_UPLOAD = API + "train_upload";
         const API_MODEL = API + "models";
 
         async function loadModels() {
@@ -140,7 +140,8 @@
         document.getElementById("uploadBtn").addEventListener("click", async () => {
             const input_train = document.getElementById("trainFileInput");
             const input_test = document.getElementById("testFileInput");
-            if (!input.files.length) return alert("请选择文件");
+            if (!input_train.files.length) return alert("请选择训练文件");
+            if (!input_test.files.length) return alert("请选择训练文件");
 
             const fd = new FormData();
             for (const f of input_train.files) fd.append("train_files", f);
@@ -180,7 +181,7 @@
                     } else {
                         clearInterval(timer);
                         document.body.removeChild(notice);
-                        window.location.href = `preview.html?id=${encodeURIComponent(res.data['id'])}`;
+                        window.location.href = `train_result.html?id=${encodeURIComponent(res.data['id'])}`;
                     }
                 }, 1000);
             } catch (e) {

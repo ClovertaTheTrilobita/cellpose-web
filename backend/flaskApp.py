@@ -43,6 +43,14 @@ def set_status(task_id, status, **extra):
     payload = {"status": status, "updated_at": datetime.datetime.utcnow().isoformat(), **extra}
     r.set(f"task:{task_id}", json.dumps(payload), ex=86400)  # 1 天过期
 
+def set_train_status(task_id, status, train_losses, test_losses, **extra):
+    payload = {"status": status,
+               "updated_at": datetime.datetime.utcnow().isoformat(),
+               "train_losses": train_losses.tolist() if hasattr(train_losses, "tolist") else train_losses,
+               "test_losses": test_losses.tolist() if hasattr(test_losses, "tolist") else test_losses,
+               **extra}
+    r.set(f"task:{task_id}", json.dumps(payload), ex=86400)  # 1 天过期
+
 def get_status(task_id):
     raw = r.get(f"task:{task_id}")
     return json.loads(raw) if raw else None
@@ -138,6 +146,8 @@ def train_upload():
 
     train_files = request.files.getlist("train_files")
     test_files = request.files.getlist("test_files")
+    os.makedirs(Path(TRAIN_DIR) /  ts, exist_ok=True)
+    os.makedirs(Path(TEST_DIR) / ts, exist_ok=True)
     set_status(ts, "pending")
     saved = []
     for f in train_files:
@@ -167,8 +177,8 @@ def train_upload():
 
     def done_cb(f):
         try:
-            f.result()
-            set_status(ts, "success")
+            train_losses, test_losses = f.result()
+            set_train_status(ts, "success", train_losses, test_losses)
         except Exception as e:
             set_status(ts, "failed", error=str(e))
 
@@ -217,3 +227,11 @@ def preview():
 def list_models():
     models_list = os.listdir(MODELS_DIR)
     return jsonify({"ok": True, "models": models_list})
+
+@app.get("/result")
+def list_results():
+    task_id = request.args.get('id')
+    st = get_status(task_id)
+    if not st:
+        return jsonify({"ok": True, "exists": False, "status": "not_found"}), 200
+    return jsonify({"ok": True, "exists": True, **st}), 200

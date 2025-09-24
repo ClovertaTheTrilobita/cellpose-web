@@ -16,8 +16,12 @@ os.environ["CELLPOSE_LOCAL_MODELS_PATH"] = MODELS_DIR
 
 r = redis.Redis(host="127.0.0.1", port=6379, db=0)
 
-def set_status(task_id, status, **extra):
-    payload = {"status": status, "updated_at": datetime.datetime.utcnow().isoformat(), **extra}
+def set_status(task_id, status, train_losses, test_losses, **extra):
+    payload = {"status": status,
+               "updated_at": datetime.datetime.utcnow().isoformat(),
+               "train_losses": train_losses.tolist() if hasattr(train_losses, "tolist") else train_losses,
+               "test_losses": test_losses.tolist() if hasattr(test_losses, "tolist") else test_losses,
+               **extra}
     r.set(f"task:{task_id}", json.dumps(payload), ex=86400)  # 1 天过期
 
 def get_status(task_id):
@@ -47,13 +51,15 @@ class Cptrain:
 
         model = models.CellposeModel(gpu=True, pretrained_model=base_model)
 
-        set_status(time, "running")
+        set_status(time, "running", None, None)
 
         model_path, train_losses, test_losses = train.train_seg(model.net,
                                                                 train_data=images, train_labels=labels,
                                                                 test_data=test_images, test_labels=test_labels,
                                                                 weight_decay=0.1, learning_rate=1e-5,
                                                                 n_epochs=100, model_name=model_name,
-                                                                save_path=MODELS_DIR)
+                                                                save_path=BASE_DIR)
 
+        set_status(time, "done", train_losses, test_losses)
         print("模型已保存到:", model_path)
+        return train_losses, test_losses
