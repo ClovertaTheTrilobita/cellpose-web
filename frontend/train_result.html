@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<h1>训练结果预览</h1>
+<p id="none-exist" hidden></p>
+<canvas id="lossChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module">
+    const API_BASE = "http://10.147.18.141:5000/";
+    const API_RESULT = API_BASE + "status";
+    const params = new URLSearchParams(window.location.search);
+    const ID = params.get("id");
+
+    const msg = document.getElementById("none-exist");
+    const cava = document.getElementById("lossChart")
+
+    if (!ID) {
+        msg.textContent = "missing id in URL";
+        msg.hidden = false;
+        cava.hidden = true;
+    } else {
+        try {
+            const res = await axios.get(API_RESULT + "?id=" + encodeURIComponent(ID));
+            console.log(res);
+            const { exists, status } = res.data; // exists: boolean, status: "running" | "success" | "failed"...
+            const data = res.data;
+
+            if (!exists) {
+                msg.textContent = `id "${ID}" 不存在`;
+                msg.hidden = false;
+                cava.hidden = true;
+            }
+            else if (status == "running") {
+                msg.textContent = `id "${ID}" 仍在运行中，请耐心等待片刻后刷新。`;
+                msg.hidden = false;
+                cava.hidden = true;
+            }
+            else {
+                msg.hidden = true;
+                cava.hidden = false;
+
+                const train_losses = data.train_losses;
+                const test_losses = data.test_losses;
+
+                const epochs = Array.from({ length: Math.max(train_losses.length, test_losses.length) }, (_, i) => i + 1);
+
+                const ctx = document.getElementById('lossChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: epochs,
+                        datasets: [
+                            {
+                                label: 'Train Loss',
+                                data: train_losses,
+                                borderColor: 'blue',
+                                fill: false,
+                                tension: 0.2,
+                            },
+                            {
+                                label: 'Test Loss',
+                                data: test_losses,
+                                borderColor: 'red',
+                                fill: false,
+                                tension: 0.2,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { title: { display: true, text: 'Epoch' } },
+                            y: { title: { display: true, text: 'Loss' } }
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            msg.textContent = "请求失败";
+            msg.hidden = false;
+            console.error(e);
+        }
+    }
+
+    window.downloadTif = function () {
+        const a = document.createElement("a");
+        a.href = API_DL + "?id=" + encodeURIComponent(ID);
+        a.download = ID; // 留空：文件名由服务端决定；可写具体名称
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
