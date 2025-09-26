@@ -37,7 +37,7 @@ r = redis.Redis(host="127.0.0.1", port=6379, db=0)
 
 # 启动测试服务器
 def run_dev():
-    app.run(host="10.147.18.141", port=5000)
+    app.run(host="192.168.193.141", port=5000)
 
 def set_status(task_id, status, **extra):
     payload = {"status": status, "updated_at": datetime.datetime.utcnow().isoformat(), **extra}
