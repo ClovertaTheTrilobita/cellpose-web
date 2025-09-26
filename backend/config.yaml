@@ -1,3 +1,7 @@
+backend:
+  ip: 192.168.193.141
+  port: 5000
+
 model:
   save_dir: models
 

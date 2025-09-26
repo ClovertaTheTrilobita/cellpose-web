@@ -29,6 +29,8 @@ OUTPUT_DIR = cfg.data.run.output_dir
 MODELS_DIR = str((CONFIG_PATH.parent / cfg.model.save_dir).resolve())
 TRAIN_DIR  = cfg.data.train.train_dir
 TEST_DIR = cfg.data.train.test_dir
+BACKEND_IP = cfg.backend.ip
+BACKEND_PORT = cfg.backend.port
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 executor = ThreadPoolExecutor(max_workers=4)
@@ -37,7 +39,7 @@ r = redis.Redis(host="127.0.0.1", port=6379, db=0)
 
 # 启动测试服务器
 def run_dev():
-    app.run(host="192.168.193.141", port=5000)
+    app.run(host=BACKEND_IP, port=int(BACKEND_PORT))
 
 def set_status(task_id, status, **extra):
     payload = {"status": status, "updated_at": datetime.datetime.utcnow().isoformat(), **extra}
