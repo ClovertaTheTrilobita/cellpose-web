@@ -1,5 +1,12 @@
-## 为cellpose搭建的简单web前后端
-![Static Badge](https://img.shields.io/badge/Python-3.12-blue)![Static Badge](https://img.shields.io/badge/Redis-6.4.0-red)![Static Badge](https://img.shields.io/badge/JSDelivr-in_use-brown)![Static Badge](https://img.shields.io/badge/Flask-3.1.2-8ecae6)
+# cellpose web
+
+<p align="center">
+  🛰️一个cellpose的简单web前后端🛰️<br>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Python-3.12-blue">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Redis-6.4.0-red">
+  <img alt="Static Badge" src="https://img.shields.io/badge/JSDelivr-in_use-brown">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Flask-3.1.2-8ecae6">
+</p>
 
 <br>
 
@@ -23,7 +30,7 @@ git clone https://github.com/ClovertaTheTrilobita/cellpose-web.git
 
 #### 1.修改配置文件
 
-##### 后端配置文件位于**[`backend/config.yaml`](backend/config.yaml)**
+##### 后端配置文件位于[`backend/config.yaml`](backend/config.yaml)
 
 默认配置如下：
 
@@ -87,9 +94,9 @@ conda create -n cpweb python=3.12
 
 - **Windows**
 
-  详见官方手册：**[Install Redis on Windows | Docs](https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-redis/install-redis-on-windows/)**
+  详见官方手册：<b>[Install Redis on Windows | Docs](https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-redis/install-redis-on-windows/)</b>
 
-  Windows上推荐使用`PhpStudy`管理redis：**[phpstudy - Windows | 小皮面板](https://www.xp.cn/phpstudy)**
+  Windows上推荐使用`PhpStudy`管理redis：<b>[phpstudy - Windows | 小皮面板](https://www.xp.cn/phpstudy)</b>
 
 - **Debian/Ubuntu**
 
@@ -134,6 +141,6 @@ python main.py
 
 项目有一个简单的默认前端。你可以配置`Nginx`实现从浏览器访问这几个HTML文件。
 
-请将Nginx指向**[`frontend/index.html`](frontend/index.html)**。
+请将Nginx指向<b>[`frontend/index.html`](frontend/index.html)</b>。
 
-如果你在本地部署，你可以在启动后端后直接打开**[`index.html`](frontend/index.html)**，开始使用。
+如果你在本地部署，你可以在启动后端后直接打开<b>[`index.html`](frontend/index.html)</b>，开始使用。
