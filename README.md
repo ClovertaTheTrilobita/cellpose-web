@@ -1,7 +1,7 @@
 # cellpose web
 
 <p align="center">
-  🛰️一个cellpose的简单web前后端🛰️<br>
+  🛰️一个cellpose的简单web前后端🛰️<br><br>
   <img alt="Static Badge" src="https://img.shields.io/badge/Python-3.12-blue">
   <img alt="Static Badge" src="https://img.shields.io/badge/Redis-6.4.0-red">
   <img alt="Static Badge" src="https://img.shields.io/badge/JSDelivr-in_use-brown">
@@ -20,7 +20,7 @@
 
 <br>
 
-### 🛠️手动部署
+## 🛠️手动部署
 
 #### 0. 克隆本仓库至本地
 
