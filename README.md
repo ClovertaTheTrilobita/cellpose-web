@@ -153,7 +153,7 @@ python main.py
 
 如果你在本地部署，你可以在启动后端后直接打开<b>[`index.html`](frontend/index.html)</b>，开始使用。
 
-## License
+## ⚖️License
 
 This project is licensed under the [Apache-2.0 license](LICENSE).
 
