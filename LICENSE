@@ -200,6 +200,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-Third-party components:
-  This project includes or depends on software licensed under BSD 3-Clause License.
-  See LICENSES/BSD-3-Clause-cellpose.txt for more information.
+This project includes or depends on the following third-party software:
+
+- Cellpose (https://github.com/mouseland/cellpose)
+  Licensed under the BSD 3-Clause License.
+  Copyright © 2020 Howard Hughes Medical Institute.
+  See LICENSES/BSD-3-Clause-cellpose.txt for details.
