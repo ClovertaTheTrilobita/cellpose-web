@@ -251,7 +251,7 @@ if [ -n "$root" ]; then
 else
   echo -e "${YELLOW}==>${RESET} Repo enviroment not found"
   if ask_yn "Do you wish to clone it from github?" y; then
-    echo "${GREEN}==>${RESET} Cloning from remote..."
+    echo -e "${GREEN}==>${RESET} Cloning from remote..."
     git clone https://github.com/ClovertaTheTrilobita/cellpose-web.git
 
     if ! cd cellpose-web; then
