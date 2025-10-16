@@ -210,13 +210,13 @@ install_redis() {
 
   case "$id" in
   arch | manjaro)
-    install_arch
+    install_arch "redis"
     ;;
   ubuntu | debian | linuxmint | pop | elementary | neon | kali | raspbian)
-    install_debian
+    install_debian "redis"
     ;;
   fedora | centos | rhel | rocky | almalinux | ol)
-    install_rhel
+    install_rhel "redis"
     ;;
   *)
     # 用 ID_LIKE 兜底
