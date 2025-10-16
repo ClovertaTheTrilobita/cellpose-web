@@ -20,6 +20,14 @@
 
 <br>
 
+## 🚀一键安装
+
+在<b>[Release页面](https://github.com/ClovertaTheTrilobita/cellpose-web/releases)</b>中下载最新的<b>install.sh</b>到你的机器上。
+
+将它放到你希望项目存在的位置，并执行它，安装脚本会将项目自动拉取到同一目录下。
+
+<br>
+
 ## 🛠️手动部署
 
 #### 0. 克隆本仓库至本地
