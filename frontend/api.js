@@ -1,7 +1,7 @@
 const config = {
   server: {
     protocol: 'http',
-    host: '192.168.193.141',
+    host: '10.10.25.240',
     port: 5000
   }
 };

@@ -14,7 +14,7 @@ from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-from backend.cp_train import Cptrain
+from cp_train import Cptrain
 from cp_run import Cprun
 
 app = Flask(__name__)
