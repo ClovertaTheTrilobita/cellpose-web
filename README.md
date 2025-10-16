@@ -152,3 +152,10 @@ python main.py
 请将Nginx指向<b>[`frontend/index.html`](frontend/index.html)</b>。
 
 如果你在本地部署，你可以在启动后端后直接打开<b>[`index.html`](frontend/index.html)</b>，开始使用。
+
+## License
+
+This project is licensed under the [Apache-2.0 license](LICENSE).
+
+It also includes code and ideas from the [Cellpose](https://github.com/mouseland/cellpose) project,
+which is licensed under the [BSD 3-Clause License](LICENSES/BSD-3-Clause-cellpose.txt).
