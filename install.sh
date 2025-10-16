@@ -129,22 +129,61 @@ install_arch() {
 install_rhel() {
   local package=$1
   local SUDO=$(need_sudo)
+
+  set -e
+  local PM
+  if command -v dnf >/dev/null 2>&1; then PM=dnf; else PM=yum; fi
+  # 识别 RHEL/CentOS 主版本号：7/8/9
+  local ELVER; ELVER="$(rpm -E %rhel 2>/dev/null || echo 0)"
+  
   # 优先 dnf；旧版用 yum。RHEL/CentOS/Fedora 的 python3 自带 venv
-  if command -v dnf >/dev/null 2>&1; then
-    if [[ "$package" = "python" ]]; then
+  if [[ "$package" = "python" ]]; then
+    if command -v dnf >/dev/null 2>&1; then
       $SUDO dnf -y install python3 python3-pip
-      # 开发工具组（可选）
-    elif [[ "$package" = "redis" ]]; then
-      $SUDO dnf -y install redis
-    fi
-    $SUDO dnf -y groupinstall "Development Tools" || true
-  else
-    if [[ "$package" = "python" ]]; then
+      $SUDO dnf -y groupinstall "Development Tools" || true
+    else
       $SUDO yum -y install python3 python3-pip || true
-    elif [[ "$package" = "redis" ]]; then
-      $SUDO yum install -y redis
+      $SUDO yum -y groupinstall "Development Tools" || true
     fi
-    $SUDO yum -y groupinstall "Development Tools" || true
+  elif [[ "$package" = "redis" ]]; then
+    if [ "$ELVER" -eq 7 ]; then
+      sudo $PM install -y epel-release
+      sudo $PM install -y redis
+    elif [ "$ELVER" -eq 8 ]; then
+      sudo $PM install -y epel-release
+      # 启用 PowerTools（EL8）
+      if command -v dnf >/dev/null 2>&1; then
+        sudo dnf config-manager --set-enabled powertools || true
+      else
+        sudo yum install -y dnf-plugins-core || true
+        sudo yum config-manager --set-enabled powertools || true
+      fi
+      # 启用 AppStream 模块里的 redis（常见是 6）
+      sudo dnf -y module reset redis   2>/dev/null || true
+      sudo dnf -y module enable redis:6 2>/dev/null || true
+      sudo $PM install -y redis
+  
+    else # EL9 及以上（CentOS Stream 9 / RHEL 9）
+      sudo $PM install -y epel-release
+      # 启用 CRB（EL9 的 PowerTools）
+      if command -v dnf >/dev/null 2>&1; then
+        sudo dnf config-manager --set-enabled crb || true
+      fi
+      # 先尝试 EPEL 提供的 redis（有的镜像没有）
+      if ! sudo $PM install -y redis; then
+        # 回退到 Remi 仓库（提供 redis:7）
+        sudo $PM install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+        sudo dnf -y module reset redis   || true
+        sudo dnf -y module enable redis:7 || true
+        sudo $PM install -y redis
+      fi
+    fi
+
+    # 安装后启动服务（不同发行服务名不同）
+    if command -v systemctl >/dev/null 2>&1; then
+      sudo systemctl enable --now redis        2>/dev/null || \
+      sudo systemctl enable --now redis-server 2>/dev/null || true
+    fi
   fi
 }
 
