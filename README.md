@@ -22,7 +22,7 @@
 
 ## 🚀一键安装
 
-在<b>[Release页面](https://github.com/ClovertaTheTrilobita/cellpose-web/releases)</b>中下载最新的 <b>install.sh</b> 到你的Linux/macOS机器上。
+在<b>[最新Release页面](https://github.com/ClovertaTheTrilobita/cellpose-web/releases/latest)</b>中下载最新的 <b>install.sh</b> 到你的Linux/macOS机器上。
 
 将它放到你希望项目存在的位置，并执行它，安装脚本会将项目自动拉取到同一目录下。
 
