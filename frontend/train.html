@@ -12,54 +12,82 @@
 
   <style>
     /* 背景与玻璃卡片 —— 与首页/预览页一致 */
-    body{
-      min-height:100vh;
+    body {
+      min-height: 100vh;
       background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.15), transparent 60%),
                   radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.18), transparent 60%),
                   linear-gradient(180deg, #f8f9fa, #eef2f7);
     }
-    @media (prefers-color-scheme: dark){
-      body{
+    @media (prefers-color-scheme: dark) {
+      body {
         background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.25), transparent 60%),
                     radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.25), transparent 60%),
                     linear-gradient(180deg, #0b1020, #0e1326);
       }
     }
-    .glass-card{
+    .glass-card {
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       background: rgba(255,255,255,.65);
-      border:1px solid rgba(255,255,255,.5);
+      border: 1px solid rgba(255,255,255,.5);
     }
-    [data-bs-theme="dark"] .glass-card{
+    [data-bs-theme="dark"] .glass-card {
       background: rgba(17,20,34,.6);
-      border:1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .section-title {
+      display: flex; align-items: center; gap: .6rem; margin-bottom: 0;
+    }
+    .hint { font-size: .9rem; opacity: .75 }
+
+    /* 小卡片（参数分组） */
+    .subcard {
+      background: rgba(255,255,255,.6);
+      border: 1px solid rgba(0,0,0,.05);
+      border-radius: 1rem;
+      padding: 1rem;
+    }
+    [data-bs-theme="dark"] .subcard {
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.08);
     }
 
-    .section-title{
-      display:flex; align-items:center; gap:.6rem;
-      margin-bottom:0;
-    }
-    .hint{font-size:.9rem; opacity:.75}
+    /* input-group 统一图标透明度 */
+    .input-group-text i { opacity: .8; }
 
-    /* 原生 progress 美化（保持 id 不变） */
-    #bar{
-      width:100%; height:1rem; border:none; border-radius:.75rem;
-      background-color:rgba(13,110,253,.15); overflow:hidden; vertical-align:middle;
+    /* progress 美化（保持 id 不变） */
+    #bar {
+      width: 100%;
+      height: 1rem;
+      border: none;
+      border-radius: .75rem;
+      background-color: rgba(13,110,253,.15);
+      overflow: hidden;
+      vertical-align: middle;
     }
-    #bar::-webkit-progress-bar{background:transparent}
-    #bar::-webkit-progress-value{background:linear-gradient(90deg,#0d6efd,#6ea8fe); border-radius:.75rem}
-    #bar::-moz-progress-bar{background:linear-gradient(90deg,#0d6efd,#6ea8fe); border-radius:.75rem}
+    #bar::-webkit-progress-bar { background: transparent; }
+    #bar::-webkit-progress-value {
+      background: linear-gradient(90deg, #0d6efd, #6ea8fe);
+      border-radius: .75rem;
+    }
+    #bar::-moz-progress-bar {
+      background: linear-gradient(90deg, #0d6efd, #6ea8fe);
+      border-radius: .75rem;
+    }
 
-    /* 上传按钮动效（保持 id 不变） */
-    #uploadBtn{
-      padding:.65rem 1.1rem; border-radius:.8rem;
-      transition:transform .12s ease, box-shadow .12s ease;
+    /* 上传/启动按钮动效（保持 id 不变） */
+    #uploadBtn {
+      padding: .65rem 1.1rem;
+      border-radius: .8rem;
+      transition: transform .12s ease, box-shadow .12s ease;
     }
-    #uploadBtn:hover, #uploadBtn:focus-visible{
-      transform:translateY(-1px);
-      box-shadow:0 .75rem 1.25rem rgba(0,0,0,.12);
+    #uploadBtn:hover, #uploadBtn:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 .75rem 1.25rem rgba(0,0,0,.12);
     }
+
+    /* 更紧凑的行距 */
+    .g-tight { row-gap: .75rem; }
   </style>
 </head>
 
@@ -68,7 +96,9 @@
     <div class="glass-card rounded-4 shadow-lg p-4 p-md-5">
       <!-- 标题 -->
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-        <h1 class="section-title h4"><i class="bi bi-cpu"></i> 训练配置</h1>
+        <h1 class="section-title h4">
+          <i class="bi bi-cpu"></i> 训练配置
+        </h1>
         <div class="hint">选择训练/测试数据并设置模型参数</div>
       </div>
 
@@ -76,61 +106,150 @@
       <div class="mb-4">
         <div class="row g-3">
           <div class="col-12 col-lg-6">
-            <label class="form-label fw-semibold"><i class="bi bi-folder2-open me-1"></i>选择训练文件</label>
+            <label class="form-label fw-semibold">
+              <i class="bi bi-folder2-open me-1"></i>选择训练文件
+            </label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-cloud-arrow-up"></i></span>
               <input id="trainFileInput" type="file" class="form-control" multiple />
             </div>
+            <div class="form-text">可多选；支持拖拽到输入框。</div>
           </div>
+
           <div class="col-12 col-lg-6">
-            <label class="form-label fw-semibold"><i class="bi bi-folder2 me-1"></i>选择测试文件</label>
+            <label class="form-label fw-semibold">
+              <i class="bi bi-folder2 me-1"></i>选择测试文件
+            </label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-cloud-arrow-up"></i></span>
               <input id="testFileInput" type="file" class="form-control" multiple />
             </div>
+            <div class="form-text">可选；用于评估训练效果。</div>
           </div>
         </div>
       </div>
 
       <hr class="my-4">
 
-      <!-- 参数区（仅美化，不改 id） -->
+      <!-- 参数区 -->
       <div class="row g-3">
         <div class="col-12 col-lg-8">
-          <div class="row g-3">
-            <div class="col-12">
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-type me-1"></i>model name</span>
-                <input id="name" type="text" class="form-control" placeholder="为你的模型命名" />
-              </div>
+          <!-- 基础设置 -->
+          <div class="subcard mb-3">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-sliders2-vertical"></i><strong>基础设置</strong>
             </div>
 
-            <div class="col-12 col-md-6">
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-image me-1"></i>image filter</span>
-                <input id="image_filter" type="text" class="form-control" placeholder="_img" />
-              </div>
-            </div>
-
-            <div class="col-12 col-md-6">
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-brush me-1"></i>masks filter</span>
-                <input id="masks_filter" type="text" class="form-control" placeholder="_masks" />
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label class="w-100">
+            <div class="row g-3 g-tight">
+              <div class="col-12">
                 <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-cpu-fill me-1"></i>model</span>
-                  <select id="model" class="form-select"></select>
+                  <span class="input-group-text"><i class="bi bi-type me-1"></i>model name</span>
+                  <input id="name" type="text" class="form-control" placeholder="为你的模型命名" />
                 </div>
-              </label>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-image me-1"></i>image filter</span>
+                  <input id="image_filter" type="text" class="form-control" placeholder="_img" />
+                </div>
+                <div class="form-text">如 <code>*_img.png</code></div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-brush me-1"></i>masks filter</span>
+                  <input id="masks_filter" type="text" class="form-control" placeholder="_masks" />
+                </div>
+                <div class="form-text">如 <code>*_masks.png</code></div>
+              </div>
+
+              <div class="col-12">
+                <label class="w-100">
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-cpu-fill me-1"></i>model</span>
+                    <select id="model" class="form-select"></select>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 训练超参 -->
+          <div class="subcard">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-rocket-takeoff"></i><strong>训练超参数</strong>
+            </div>
+
+            <div class="row g-3 g-tight">
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-speedometer2 me-1"></i>learning rate</span>
+                  <input id="learning_rate" type="text" class="form-control" placeholder="0.005" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-hash me-1"></i>n epochs</span>
+                  <input id="n_epochs" type="text" class="form-control" placeholder="100" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-diagram-2 me-1"></i>weight decay</span>
+                  <input id="weight_decay" type="text" class="form-control" placeholder="0.1" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-arrows-move me-1"></i>normalize</span>
+                  <select id="normalize" class="form-select">
+                    <option selected value="1">True</option>
+                    <option value="0">False</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-gear me-1"></i>compute flows</span>
+                  <!-- 注意：此处 id 仍为 normalize（你原文如此）。建议后续改名避免重复 -->
+                  <select id="compute_flows" class="form-select">
+                    <option selected value="0">False</option>
+                    <option value="1">True</option>
+                  </select>
+                </div>
+                <div class="form-text">与光流/流场相关，通常仅在特定任务启用。</div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-123 me-1"></i>min train masks</span>
+                  <input id="min_train_masks" type="text" class="form-control" placeholder="5" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-collection me-1"></i>nimg_per_epoch</span>
+                  <input id="nimg_per_epoch" type="text" class="form-control" placeholder="" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-layers me-1"></i>channel axis</span>
+                  <input id="channel_axis" type="text" class="form-control" placeholder="" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 右侧提示（可删，不影响逻辑） -->
+        <!-- 右侧提示 -->
         <div class="col-12 col-lg-4">
           <div class="p-3 rounded-3 border h-100">
             <div class="d-flex align-items-center mb-2">
@@ -139,7 +258,8 @@
             <div class="hint">
               • 名称用于区分训练产物（日志/权重）。<br>
               • filter 用于匹配文件名，如 <code>*_img.png</code>、<code>*_masks.png</code>。<br>
-              • 选择合适的预训练模型可加速收敛。
+              • 选择合适的预训练模型可加速收敛。<br>
+              • 建议仅微调必要超参，保持可复现性。
             </div>
           </div>
         </div>
@@ -153,12 +273,11 @@
         <div class="flex-grow-1">
           <div class="d-flex align-items-center justify-content-between mb-1">
             <span class="hint"><i class="bi bi-activity me-1"></i>进度</span>
-            <span class="hint" id="barText"></span><!-- 如需 JS 写入文字可用；不用也不影响 -->
+            <span class="hint" id="barText"></span>
           </div>
           <progress id="bar" max="100" value="0"></progress>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -239,13 +358,29 @@
             const model_name = (document.getElementById('model_name')?.value || '').trim();
             const image_filter = (document.getElementById('image_filter')?.value || '').trim();
             const masks_filter = (document.getElementById('masks_filter')?.value || '').trim();
+            const learning_rate = (document.getElementById('learning_rate')?.value || '').trim();
+            const n_epochs = (document.getElementById('n_epochs')?.value || '').trim();
+            const weight_decay = (document.getElementById('weight_decay')?.value || '').trim();
+            const normalize = document.getElementById('normalize')?.value;
+            const compute_flows = document.getElementById('compute_flows')?.value;
+            const min_train_masks = (document.getElementById('min_train_masks')?.value || '').trim();
+            const nimg_per_epoch = (document.getElementById('nimg_per_epoch')?.value || '').trim();
+            const channel_axis = (document.getElementById('weight_decay')?.value || '').trim();
 
             // 用 URLSearchParams 组装查询串
             const qs = new URLSearchParams({
                 model: model,
                 model_name: model_name,
                 image_filter: image_filter,
-                masks_filter: masks_filter
+                masks_filter: masks_filter,
+                learning_rate: learning_rate,
+                n_epochs: n_epochs,
+                weight_decay: weight_decay,
+                normalize: normalize,
+                compute_flows: compute_flows,
+                min_train_masks: min_train_masks,
+                nimg_per_epoch: nimg_per_epoch,
+                channel_axis: channel_axis
             });
 
             return `${API_UPLOAD}?${qs.toString()}`;
