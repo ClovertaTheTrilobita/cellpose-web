@@ -138,12 +138,17 @@
                 const data = res.data;
 
                 if (!exists) {
-                    msg.textContent = `id "${ID}" 不存在`;
+                    msg.textContent = `任务 "${ID}" 不存在`;
                     msg.hidden = false;
                     cava.hidden = true;
                 }
                 else if (status == "running") {
-                    msg.textContent = `id "${ID}" 仍在运行中，请耐心等待片刻后刷新。`;
+                    msg.textContent = `任务 "${ID}" 仍在运行中，请耐心等待片刻后刷新。`;
+                    msg.hidden = false;
+                    cava.hidden = true;
+                }
+                else if (status == "failed") {
+                    msg.textContent = `任务 "${ID}" 运行失败，由于："Error: ${data.error}"，请检查上传数据集是否存在问题`;
                     msg.hidden = false;
                     cava.hidden = true;
                 }

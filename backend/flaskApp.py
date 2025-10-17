@@ -244,6 +244,7 @@ def status():
     """
     task_id = request.args.get('id')
     st = get_status(task_id)
+    print(st)
     if not st:
         return jsonify({"ok": True, "exists": False, "status": "not_found"}), 200
     return jsonify({"ok": True, "exists": True, **st}), 200
