@@ -140,11 +140,47 @@ def run_upload():
 
 @app.post("/train_upload")
 def train_upload():
+
+    def _to_float(x, default):
+        try:
+            return float(x)
+        except (TypeError, ValueError):
+            return default
+
+    def _to_int(x, default):
+        try:
+            return int(x)
+        except (TypeError, ValueError):
+            return default
+
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
     model_name = request.args.get("model_name") or f"custom_model-{ts}"
     image_filter = request.args.get("image_filter") or "_img"
     mask_filter = request.args.get("mask_filter") or "_masks"
     base_model = request.args.get("base_model") or "cpsam"
+    batch_size = _to_int(request.args.get("batch_size"), 8)
+    learning_rate = _to_float(request.args.get("learning_rate"), 5e-5)
+    n_epochs = _to_int(request.args.get("n_epochs"), 100)
+    weight_decay = _to_float(request.args.get("weight_decay"), 0.1)
+    normalize = request.args.get(
+        "normalize",
+        default=True,
+        type=lambda v: str(v).strip().lower() in ("1","true","t","yes","y","on")
+    )
+    compute_flows = request.args.get(
+        "compute_flows",
+        default=True,
+        type=lambda v: str(v).strip().lower() in ("1","true","t","yes","y","on")
+    )
+    min_train_masks = _to_int(request.args.get(" min_train_masks"), 5)
+    nimg_per_epoch = _to_int(request.args.get("nimg_per_epoch"), None)
+    rescale = request.args.get(
+        "rescale",
+        default=False,
+        type=lambda v: str(v).strip().lower() in ("1","true","t","yes","y","on")
+    )
+    scale_range = _to_float(request.args.get("scale_range"), None)
+    channel_axis = _to_int(request.args.get("channel_axis"), None)
 
     train_files = request.files.getlist("train_files")
     test_files = request.files.getlist("test_files")
@@ -172,7 +208,18 @@ def train_upload():
             model_name=model_name,
             image_filter=image_filter,
             mask_filter=mask_filter,
-            base_model=base_model
+            base_model=base_model,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+            n_epochs=n_epochs,
+            weight_decay=weight_decay,
+            normalize=normalize,
+            compute_flows=compute_flows,
+            min_train_masks=min_train_masks,
+            nimg_per_epoch=nimg_per_epoch,
+            rescale=rescale,
+            scale_range=scale_range,
+            channel_axis=channel_axis,
         ))
 
     fut = executor.submit(job)
@@ -197,6 +244,7 @@ def status():
     """
     task_id = request.args.get('id')
     st = get_status(task_id)
+    print(st)
     if not st:
         return jsonify({"ok": True, "exists": False, "status": "not_found"}), 200
     return jsonify({"ok": True, "exists": True, **st}), 200

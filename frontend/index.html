@@ -1,18 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN" data-bs-theme="auto">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bootstrap demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>任务面板</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    /* 背景渐变 + 玻璃感卡片 */
+    body {
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.15), transparent 60%),
+                  radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.18), transparent 60%),
+                  linear-gradient(180deg, #f8f9fa, #eef2f7);
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.25), transparent 60%),
+                    radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.25), transparent 60%),
+                    linear-gradient(180deg, #0b1020, #0e1326);
+      }
+    }
+
+    .glass-card {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    [data-bs-theme="dark"] .glass-card {
+      background: rgba(17, 20, 34, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .action-btn {
+      transition: transform .15s ease, box-shadow .15s ease;
+      padding: 1.1rem 1.4rem;
+      font-size: 1.05rem;
+      border-radius: 1rem;
+    }
+    .action-btn:hover, .action-btn:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 0.75rem 1.25rem rgba(0,0,0,.12);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .brand-badge {
+      letter-spacing: .08em;
+      background: rgba(13,110,253,.1);
+      color: #0d6efd;
+      border: 1px solid rgba(13,110,253,.15);
+    }
+    [data-bs-theme="dark"] .brand-badge {
+      background: rgba(13,110,253,.15);
+      color: #9ec5fe;
+      border-color: rgba(13,110,253,.25);
+    }
+  </style>
 </head>
 
 <body>
+  <main class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="glass-card rounded-4 shadow-lg p-4 p-md-5 text-center">
+        <div class="d-flex justify-content-center mb-3">
+          <span class="badge brand-badge rounded-pill px-3 py-2">
+            <i class="bi bi-rocket-takeoff me-1"></i> Cell Processing with <a href="https://github.com/MouseLand/cellpose">CELLPOSE</a>
+          </span>
+        </div>
 
-    <a href="run.html">运行</a>
-    <a href="train.html">训练</a>
+        <h1 class="display-6 fw-semibold mb-2">欢迎使用任务面板</h1>
+        <p class="text-secondary mb-4">
+          选择你要进行的操作。可随时返回此页切换任务。
+        </p>
+
+        <div class="row g-3 g-md-4 justify-content-center">
+          <div class="col-12 col-sm-6">
+            <a href="run.html" class="btn btn-primary w-100 action-btn btn-icon" role="button" aria-label="进入运行页面">
+              <i class="bi bi-play-circle-fill fs-4"></i>
+              <span>
+                运行<br>
+                <small class="opacity-75">快速执行已有模型/流程</small>
+              </span>
+            </a>
+          </div>
+          <div class="col-12 col-sm-6">
+            <a href="train.html" class="btn btn-outline-primary w-100 action-btn btn-icon" role="button" aria-label="进入训练页面">
+              <i class="bi bi-cpu-fill fs-4"></i>
+              <span>
+                训练<br>
+                <small class="opacity-75">启动或继续训练任务</small>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <hr class="my-4 my-md-5">
+
+        <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+          <a href="https://github.com/ClovertaTheTrilobita/cellpose-web" class="link-secondary text-decoration-none">
+            <i class="bi bi-github"></i> Github
+          </a>
+          <span class="text-secondary d-none d-md-inline">•</span>
+          <a href="#" class="link-secondary text-decoration-none">
+            <i class="bi bi-gear"></i> 设置
+          </a>
+          <span class="text-secondary d-none d-md-inline">•</span>
+          <span class="text-secondary"><i class="bi bi-keyboard"></i> 快捷键：<kbd>R</kbd> 运行，<kbd>T</kbd> 训练</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 键盘快捷键（可选） -->
+  <script>
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT','TEXTAREA'].includes((e.target.tagName || '').toUpperCase())) return;
+      if (e.key.toLowerCase() === 'r') location.href = 'run.html';
+      if (e.key.toLowerCase() === 't') location.href = 'train.html';
+    });
+  </script>
+
+  <!-- 只需引入 bundle（已包含 Popper） -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+          crossorigin="anonymous"></script>
 </body>
-
 </html>
