@@ -395,6 +395,6 @@ else
 fi
 
 echo -e "${GREEN}==>${RESET} Deployment successfull"
-if ask_yn "Do you wish to start cellpose server now?" y; then
+if ask_yn "Do you wish to start cellpose developmental server now?" y; then
   python ${root}/backend/main.py
 fi
