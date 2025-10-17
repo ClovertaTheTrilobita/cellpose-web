@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <div style="padding: 1rem 1rem;">
+  <!-- <div style="padding: 1rem 1rem;">
     <div class="mb-3 border" style="padding: 1rem 1rem;">
       <div class="input-group mb-3">
         <input id="fileInput" type="file" class="form-control" multiple />
@@ -47,7 +47,94 @@
       </div>
     </div>
   </div>
-  <br><br><br>
+  <br><br><br> -->
+
+    <div class="container py-4">
+    <div class="glass-card rounded-4 shadow-lg p-4 p-md-5">
+
+      <!-- 上传区 -->
+      <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 class="h5 section-title mb-0"><i class="bi bi-folder2-open me-2"></i>选择文件</h2>
+          <span class="hint">可多选</span>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-cloud-arrow-up"></i></span>
+          <input id="fileInput" type="file" class="form-control" multiple />
+        </div>
+      </div>
+
+      <hr class="my-4">
+
+      <!-- 参数区 -->
+      <div class="row g-3">
+        <div class="col-12 col-lg-8">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-speedometer2 me-1"></i>flow threshold</span>
+                <input id="flow" type="text" class="form-control" placeholder="" />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-bezier2 me-1"></i>cellprob threshold</span>
+                <input id="cellprob" type="text" class="form-control" placeholder="" />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-bounding-box-circles me-1"></i>diameter</span>
+                <input id="diameter" type="text" class="form-control" placeholder="" />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="w-100">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-cpu-fill me-1"></i>model</span>
+                  <select id="model" class="form-select"></select>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧说明（可删） -->
+        <div class="col-12 col-lg-4">
+          <div class="p-3 rounded-3 border h-100">
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>提示</strong>
+            </div>
+            <div class="hint">
+              • 参数留空将使用默认值。<br>
+              • 数值可使用小数（如 0.4）。<br>
+              • 选择合适的模型以获得更稳健的分割效果。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 行动区 -->
+      <div class="mt-4 d-flex flex-column flex-md-row align-items-stretch gap-3">
+        <button id="uploadBtn" class="btn btn-success d-inline-flex align-items-center">
+          <i class="bi bi-upload me-2"></i> Upload
+        </button>
+
+        <div class="flex-grow-1">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="hint"><i class="bi bi-activity me-1"></i>进度</span>
+            <span class="hint" id="barText"></span><!-- 如需，你的 JS 可写入文本 -->
+          </div>
+          <progress id="bar" max="100" value="0"></progress>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -184,6 +271,82 @@
       }
     });
   </script>
+
+  <style>
+  /* 页面背景与卡片 */
+  body {
+    min-height: 100vh;
+    background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.15), transparent 60%),
+                radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.18), transparent 60%),
+                linear-gradient(180deg, #f8f9fa, #eef2f7);
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(13,110,253,.25), transparent 60%),
+                  radial-gradient(800px 400px at 80% 90%, rgba(32,201,151,.25), transparent 60%),
+                  linear-gradient(180deg, #0b1020, #0e1326);
+    }
+  }
+  .glass-card {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+  [data-bs-theme="dark"] .glass-card {
+    background: rgba(17, 20, 34, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* 区块与控件 */
+  .section-title {
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+  .input-group-text i {
+    opacity: .7;
+  }
+  .hint {
+    font-size: .875rem;
+    opacity: .75;
+  }
+
+  /* 原生 <progress> 美化（保持 id 不变） */
+  #bar {
+    width: 100%;
+    height: 1rem;
+    border: none;
+    border-radius: .75rem;
+    background-color: rgba(13,110,253,.15);
+    overflow: hidden;
+    vertical-align: middle;
+  }
+  /* Chrome / Edge / Safari */
+  #bar::-webkit-progress-bar {
+    background-color: transparent;
+  }
+  #bar::-webkit-progress-value {
+    background: linear-gradient(90deg, #0d6efd, #6ea8fe);
+    border-radius: .75rem;
+  }
+  /* Firefox */
+  #bar::-moz-progress-bar {
+    background: linear-gradient(90deg, #0d6efd, #6ea8fe);
+    border-radius: .75rem;
+  }
+
+  /* 上传按钮动效 */
+  #uploadBtn {
+    padding: .65rem 1.1rem;
+    border-radius: .8rem;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  #uploadBtn:hover, #uploadBtn:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 .75rem 1.25rem rgba(0,0,0,.12);
+  }
+</style>
+
 </body>
 
 </html>

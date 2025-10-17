@@ -145,6 +145,17 @@ def train_upload():
     image_filter = request.args.get("image_filter") or "_img"
     mask_filter = request.args.get("mask_filter") or "_masks"
     base_model = request.args.get("base_model") or "cpsam"
+    batch_size = request.args.get("batch_size") or 8
+    learning_rate = request.args.get("learning_rate") or 5e-5
+    n_epochs = request.args.get("n_epochs") or 100
+    weight_decay = request.args.get("weight_decay") or 0.1
+    normalize = request.args.get("normalize") or True
+    compute_flows = request.args.get("compute_flows") or False
+    min_train_masks = request.args.get(" min_train_masks") or 5
+    nimg_per_epoch = request.args.get("nimg_per_epoch") or None
+    rescale = request.args.get("rescale") or False
+    scale_range = request.args.get("scale_range") or None
+    channel_axis = request.args.get("channel_axis") or None
 
     train_files = request.files.getlist("train_files")
     test_files = request.files.getlist("test_files")
@@ -172,7 +183,18 @@ def train_upload():
             model_name=model_name,
             image_filter=image_filter,
             mask_filter=mask_filter,
-            base_model=base_model
+            base_model=base_model,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+            n_epochs=n_epochs,
+            weight_decay=weight_decay,
+            normalize=normalize,
+            compute_flows=compute_flows,
+            min_train_masks=min_train_masks,
+            nimg_per_epoch=nimg_per_epoch,
+            rescale=rescale,
+            scale_range=scale_range,
+            channel_axis=channel_axis,
         ))
 
     fut = executor.submit(job)
