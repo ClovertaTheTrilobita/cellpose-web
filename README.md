@@ -6,7 +6,12 @@
   <img alt="Static Badge" src="https://img.shields.io/badge/Redis-6.4.0-red">
   <img alt="Static Badge" src="https://img.shields.io/badge/JSDelivr-in_use-brown">
   <img alt="Static Badge" src="https://img.shields.io/badge/Flask-3.1.2-8ecae6">
+  <br><br>
+  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/da5b891e-b4ac-484a-885c-0856f18e04fc" style="height: 70%; width: 70%"/>
 </p>
+
+
+
 
 <br>
 
