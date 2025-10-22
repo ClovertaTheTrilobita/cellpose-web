@@ -6,7 +6,12 @@
   <img alt="Static Badge" src="https://img.shields.io/badge/Redis-6.4.0-red">
   <img alt="Static Badge" src="https://img.shields.io/badge/JSDelivr-in_use-brown">
   <img alt="Static Badge" src="https://img.shields.io/badge/Flask-3.1.2-8ecae6">
+  <br><br>
+  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/da5b891e-b4ac-484a-885c-0856f18e04fc" style="height: 70%; width: 70%"/>
 </p>
+
+
+
 
 <br>
 
@@ -17,6 +22,18 @@
 - 📚 权重可直接作为后续分割模型
 - 🛠️ 一键安装部署脚本
 - 🎨 前端样式美化
+
+<br>
+
+## 🚀一键安装
+
+在<b>[最新Release页面](https://github.com/ClovertaTheTrilobita/cellpose-web/releases/latest)</b>中下载最新的 <b>install.sh</b> 到你的Linux/macOS机器上。
+
+将它放到你希望项目存在的位置，并执行它，安装脚本会将项目自动拉取到同一目录下。
+
+**NOTE:** 安装脚本设计上支持Debian系、Arch系、RHEL系Linux,但目前仅测试过Arch Linux。其他发行版暂未经过测试，若出现意外错误，推荐手动安装。
+
+Windows暂时不支持通过脚本一键安装。
 
 <br>
 
@@ -144,3 +161,10 @@ python main.py
 请将Nginx指向<b>[`frontend/index.html`](frontend/index.html)</b>。
 
 如果你在本地部署，你可以在启动后端后直接打开<b>[`index.html`](frontend/index.html)</b>，开始使用。
+
+## ⚖️License
+
+This project is licensed under the [Apache-2.0 license](LICENSE).
+
+It also includes code and ideas from the [Cellpose](https://github.com/mouseland/cellpose) project,
+which is licensed under the [BSD 3-Clause License](LICENSES/BSD-3-Clause-cellpose.txt).
