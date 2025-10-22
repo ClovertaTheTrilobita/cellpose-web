@@ -19,6 +19,19 @@ os.environ["CELLPOSE_LOCAL_MODELS_PATH"] = MODELS_DIR
 r = redis.Redis(host="127.0.0.1", port=6379, db=0)
 
 def set_status(task_id, status, train_losses, test_losses, **extra):
+    """
+    修改redis数据库中某一任务的运行状态
+
+    Args:
+        task_id: 这一任务的时间戳
+        status: 任务状态
+        train_losses: 此次任务的训练loss
+        test_losses: 此次任务的测试loss
+        **extra:
+
+    Returns:
+
+    """
     payload = {"status": status,
                "updated_at": datetime.datetime.utcnow().isoformat(),
                "train_losses": train_losses.tolist() if hasattr(train_losses, "tolist") else train_losses,
@@ -55,6 +68,32 @@ class Cptrain:
                           scale_range=None,
                           channel_axis: int = None,
                           ):
+        """
+        开始训练
+
+        Args:
+            time: 此次任务的时间戳（即任务ID）
+            model_name: 训练结果命名
+            image_filter:
+            mask_filter:
+            base_model:
+            train_probs:
+            test_probs:
+            batch_size:
+            learning_rate:
+            n_epochs:
+            weight_decay:
+            normalize:
+            compute_flows:
+            min_train_masks:
+            nimg_per_epoch:
+            rescale:
+            scale_range:
+            channel_axis:
+
+        Returns:
+
+        """
 
         train_dir = Path(TRAIN_DIR) / time
         test_dir = Path(TEST_DIR) / time

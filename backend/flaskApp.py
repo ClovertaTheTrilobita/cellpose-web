@@ -93,14 +93,9 @@ def run_upload():
             return default
 
     flow_threshold = _to_float(request.args.get("flow_threshold") or request.form.get("flow_threshold"), 0.4)
-    cellprob_threshold = _to_float(request.args.get("cellprob_threshold") or request.form.get("cellprob_threshold"),
-                                   0.0)
+    cellprob_threshold = _to_float(request.args.get("cellprob_threshold") or request.form.get("cellprob_threshold"),0.0)
     diameter_raw = request.args.get("diameter") or request.form.get("diameter")
     diameter = _to_float(diameter_raw, None) if diameter_raw not in (None, "") else None
-
-    print("cpt:" + str(cellprob_threshold))
-    print("flow:" + str(flow_threshold))
-    print("diameter:" + str(diameter))
 
     # 将文件保存在本地目录中
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
@@ -140,19 +135,39 @@ def run_upload():
 
 @app.post("/train_upload")
 def train_upload():
+    """
+    从前端获取训练数据和测试数据，并开始训练
+
+    Returns:
+
+    """
 
     def _to_float(x, default):
+        """
+        将变量转为float类型
+        Args:
+            x: 变量
+            default: 默认值
+        """
+
         try:
             return float(x)
         except (TypeError, ValueError):
             return default
 
     def _to_int(x, default):
+        """
+        将变量转为int类型
+        Args:
+            x: 变量
+            default: 默认值
+        """
         try:
             return int(x)
         except (TypeError, ValueError):
             return default
 
+    # 获取从前端传来的参数
     ts = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + f"-{int(time.time()*1000)%1000:03d}"
     model_name = request.args.get("model_name") or f"custom_model-{ts}"
     image_filter = request.args.get("image_filter") or "_img"
@@ -182,6 +197,7 @@ def train_upload():
     scale_range = _to_float(request.args.get("scale_range"), None)
     channel_axis = _to_int(request.args.get("channel_axis"), None)
 
+    # 创建工作目录
     train_files = request.files.getlist("train_files")
     test_files = request.files.getlist("test_files")
     os.makedirs(Path(TRAIN_DIR) /  ts, exist_ok=True)
@@ -203,34 +219,30 @@ def train_upload():
         saved.append(os.path.join(TEST_DIR, ts, name))
 
     def job():
+        """
+        子线程方法
+        """
         return asyncio.run(Cptrain.start_train(
-            time=ts,
-            model_name=model_name,
-            image_filter=image_filter,
-            mask_filter=mask_filter,
-            base_model=base_model,
-            batch_size=batch_size,
-            learning_rate=learning_rate,
-            n_epochs=n_epochs,
-            weight_decay=weight_decay,
-            normalize=normalize,
-            compute_flows=compute_flows,
-            min_train_masks=min_train_masks,
-            nimg_per_epoch=nimg_per_epoch,
-            rescale=rescale,
-            scale_range=scale_range,
-            channel_axis=channel_axis,
+            time=ts, model_name=model_name, image_filter=image_filter, mask_filter=mask_filter, base_model=base_model,
+            batch_size=batch_size, learning_rate=learning_rate, n_epochs=n_epochs, weight_decay=weight_decay,
+            normalize=normalize, compute_flows=compute_flows, min_train_masks=min_train_masks, nimg_per_epoch=nimg_per_epoch,
+            rescale=rescale, scale_range=scale_range, channel_axis=channel_axis,
         ))
 
+    # 创建一个子线程，防止阻塞主线程
     fut = executor.submit(job)
 
     def done_cb(f):
+        """
+        获取训练结果，并存入redis数据库
+        """
         try:
             train_losses, test_losses = f.result()
             set_train_status(ts, "success", train_losses, test_losses)
         except Exception as e:
             set_status(ts, "failed", error=str(e))
 
+    # 添加回调，在子线程执行完后更新redis中任务状态
     fut.add_done_callback(done_cb)
 
     return jsonify({"ok": True, "count": len(saved), "id": ts})
@@ -251,6 +263,13 @@ def status():
 
 @app.get("/preview")
 def preview():
+    """
+    获取本次分割结果的预览
+
+    Returns:
+
+    """
+
     task_id = request.args.get('id')
     task_dir = Path(OUTPUT_DIR) / task_id
     if not task_dir.exists():
@@ -275,11 +294,24 @@ def preview():
 
 @app.get("/models")
 def list_models():
-    models_list = os.listdir(MODELS_DIR)
+    """
+    获取现有模型列表
+
+    Returns:
+
+    """
+
+    models_list = os.listdir(MODELS_DIR) # 查询模型列表中有哪些文件
     return jsonify({"ok": True, "models": models_list})
 
 @app.get("/result")
 def list_results():
+    """
+    获取运行结果
+
+    Returns:
+
+    """
     task_id = request.args.get('id')
     st = get_status(task_id)
     if not st:

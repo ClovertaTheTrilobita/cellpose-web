@@ -62,6 +62,20 @@ class Cprun:
                   diameter: float | None = None,
                   flow_threshold: float = 0.4,
                   cellprob_threshold: float = 0.0, ):
+        """
+        运行 cellpose 分割
+
+        Args:
+            images: [list] 图片存储路径
+            time: [str] 开始运行的时间，相当于本次运行的ID，用于存储运行结果
+            model: [str] 图像分割所使用的模型
+            diameter: [float]  diameters are used to rescale the image to 30 pix cell diameter.
+            flow_threshold: [float] flow error threshold (all cells with errors below threshold are kept) (not used for 3D). Defaults to 0.4.
+            cellprob_threshold: [float] all pixels with value above threshold kept for masks, decrease to find more and larger masks. Defaults to 0.0.
+
+        Returns:
+
+        """
 
         if time is None:
             return [False, "No time received"]
@@ -71,9 +85,10 @@ class Cprun:
 
         message = [f"Using {model} model"]
 
+        # 设定模型参数
         model = models.CellposeModel(gpu=True, model_type=model)
         files = images
-        imgs = [imread(f) for f in files]
+        imgs = [imread(f) for f in files] # 获取目录中的每一个文件
         masks, flows, styles = model.eval(
             imgs,
             flow_threshold=flow_threshold,
@@ -90,7 +105,7 @@ class Cprun:
             out = base + "_output"
             save_masks(imgs, mask, flow, out, tif=True)
 
-            # 用 plot 生成彩色叠加图（不依赖 skimage）
+            # 用 plot 生成彩色叠加图
             rgb = plot.image_to_rgb(img, channels=[0, 0])  # 原图转 RGB
             over = plot.mask_overlay(rgb, masks=mask, colors=None)  # 叠加彩色实例
             Image.fromarray(over).save(base + "_overlay.png")
